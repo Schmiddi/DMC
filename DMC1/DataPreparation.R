@@ -4,6 +4,10 @@ library(caret)
 source("collapse_country_to_region.r")
 source("collapse_country_to_status.r")
 source("remove_leading_whitespace_factor.R")
+#install.packages("FSelector")
+library(FSelector)
+
+
 # For reasons of traceability you must use a fixed seed
 set.seed(42) # do NOT CHANGE this seed
 
@@ -138,3 +142,18 @@ test_data$region <- as.factor(test_data$region)
 ### Review final structure
 str(training_data)
 str(test_data)
+
+
+#-------------------------------------------#
+#------------ Feature Selection ------------#
+#-------------------------------------------#
+# Calculate weights for the attributes using Info Gain and Gain Ratio
+weights_info_gain = information.gain(income ~ ., data=training_data)
+#weights_info_gain
+weights_gain_ratio = gain.ratio(income ~ ., data=training_data)
+#weights_gain_ratio
+# Select the 10 most important attributes based on Gain Ratio
+most_important_attributes <- cutoff.k(weights_gain_ratio, 10)
+#most_important_attributes
+formula_with_most_important_attributes <- as.simple.formula(most_important_attributes, "income")
+#formula_with_most_important_attributes
