@@ -46,7 +46,7 @@ svmLinear <- function(attr, X) {
 svmRadialCost <- function(attr, X) {
   set.seed(42)
   fitCtrl <- trainControl(method="repeatedcv", number=10, repeats=1)
-  mod <- train(attr, data=X, method="svmRadialCost", trControl=fitCtrl, metric="Accuracy",tuneGrid=data.frame(C=c(2^(-5))))#,2^(-4),2^(-3),2^(-2),2^(-1),2^(0),2^(1),2^(2),2^(3),2^(4))))
+  mod <- train(attr, data=X, method="svmRadialCost", trControl=fitCtrl, metric="Accuracy",tuneGrid=data.frame(C=c(2^(-3))))#,2^(-4),2^(-3),2^(-2),2^(-1),2^(0),2^(1),2^(2),2^(3),2^(4))))
   return (mod)  
 }
 
@@ -89,7 +89,7 @@ model$finalModel
 
 # Show confusion matrix (in percent)
 confusionMatrix(model)
-
+str(training_data)
 
 ######################################################
 # 5. Predict Classes in Test Data
@@ -99,4 +99,4 @@ table (predictions$prediction)
 
 ######################################################
 # 6. Export the Predictions
-write.csv(predictions, file="predictions_DropDatabase_1.csv", row.names=FALSE)
+write.csv(predictions, file="predictions_DropDatabase_2.csv", row.names=FALSE)

@@ -22,19 +22,12 @@ test_data = read.csv("TestData.csv", sep=",")
 #############################
 ##### Data Preparation  #####
 #############################
-str(training_data)
+#str(training_data)
 
 #------------ id ------------#
 # Remove column
 training_data$id = NULL 
 #test_data$id = NULL 
-
-#------------ date ------------#
-#table(training_data$date, useNA="always")
-#table(test_data$date, useNA="always")
-date_format = "%Y-%m-%d"
-training_data$date = as.Date(training_data$date, date_format)
-test_data$date = as.Date(test_data$date, date_format)
 
 # saluation
 #table(training_data$salutation, useNA="always")
@@ -57,13 +50,6 @@ MAIL=c("AOL","Arcor","Freenet","Google Mail", "GMX", "Hotmail", "online.de", "on
 training_data$mail = factor(training_data$mail, levels=0:12, labels=MAIL)
 test_data$mail = factor(test_data$mail, levels=0:12, labels=MAIL)
 
-#creation_date
-#table(training_data$creation_date, useNA="always")
-#table(test_data$creation_date, useNA="always")
-#date_format = "%Y-%m-%d"
-training_data$creation_date = as.Date(training_data$creation_date, date_format)
-test_data$creation_date = as.Date(test_data$creation_date, date_format)
-
 #newsletter
 #table(training_data$newsletter, useNA="always")
 #table(test_data$newsletter, useNA="always")
@@ -74,7 +60,7 @@ test_data$newsletter = factor(test_data$newsletter, levels=0:1, labels=NOYES)
 # model
 #table(training_data$model, useNA="always")
 #table(test_data$model, useNA="always")
-MODEL = c("Model 1", "Model 2","Model 3")
+MODEL = c("Model one", "Model two","Model three")
 training_data$model = factor(training_data$model, levels=1:3, labels=MODEL)
 test_data$model = factor(test_data$model, levels=1:3, labels=MODEL)
 
@@ -107,8 +93,8 @@ training_data$delivpostcode = NULL
 test_data$delivpostcode = NULL
 
 # voucher
-table(training_data$voucher, useNA="always")
-table(test_data$voucher, useNA="always")
+#table(training_data$voucher, useNA="always")
+#table(test_data$voucher, useNA="always")
 #NOYES = c("no", "yes")
 training_data$voucher = factor(training_data$voucher, levels=0:1, labels=NOYES)
 test_data$voucher = factor(test_data$voucher, levels=0:1, labels=NOYES)
@@ -128,13 +114,13 @@ tmp[tmp!="no"] = "yes"
 test_data$advertisingdatacode = factor(tmp)
 
 # value
-#table(training_data$value, useNA="always")
+table(training_data$value, useNA="always")
 #table(test_data$value, useNA="always")
 #NOYES = c("no", "yes")
-VALUE = c("1","2","3","4","5")
-training_data$value  = ordered(training_data$value , levels=VALUE)
-test_data$value = ordered(test_data$value, levels=VALUE)
-str(training_data)
+VALUE = c("lowest","low","mid","high","highest")
+training_data$value  = ordered(training_data$value ,levels=:5, labels=VALUE)
+test_data$value = ordered(test_data$value, levels=0:1,labels=VALUE)
+#str(training_data)
 
 # numberitems
 #table(training_data$numberitems, useNA="always")
@@ -149,8 +135,8 @@ training_data$gift = factor(training_data$gift, levels=0:1, labels=NOYES)
 test_data$gift = factor(test_data$gift, levels=0:1, labels=NOYES)
 
 # entry
-table(training_data$entry, useNA="always")
-table(test_data$entry, useNA="always")
+#table(training_data$entry, useNA="always")
+#table(test_data$entry, useNA="always")
 ENTRY = c("shop", "partner")
 training_data$entry = factor(training_data$entry, levels=0:1, labels=ENTRY)
 test_data$entry = factor(test_data$entry, levels=0:1, labels=ENTRY)
@@ -172,20 +158,6 @@ test_data$points= NULL
 training_data$shippingcosts = factor(training_data$shippingcosts, levels=0:1, labels=NOYES)
 test_data$shippingcosts = factor(test_data$shippingcosts, levels=0:1, labels=NOYES)
 
-# deliverydatepromised
-#table(training_data$deliverydatepromised, useNA="always")
-#table(test_data$deliverydatepromised, useNA="always")
-#date_format = "%Y-%m-%d"
-training_data$deliverydatepromised = as.Date(training_data$deliverydatepromised, date_format)
-test_data$deliverydatepromised = as.Date(test_data$deliverydatepromised, date_format)
-
-# deliverydatereal
-#table(training_data$deliverydatereal, useNA="always")
-#table(test_data$deliverydatereal, useNA="always")
-#date_format = "%Y-%m-%d"
-training_data$deliverydatereal = as.Date(training_data$deliverydatereal, date_format)
-test_data$deliverydatereal = as.Date(test_data$deliverydatereal, date_format)
-
 # weight
 #table(training_data$weight, useNA="always")
 #table(test_data$weight, useNA="always")
@@ -206,12 +178,13 @@ test_data$deliverydatereal = as.Date(test_data$deliverydatereal, date_format)
 #table(test_data$used, useNA="always")
 
 # reorder
-table(training_data$reorder, useNA="always")
-table(test_data$reorder, useNA="always")
+#table(training_data$reorder, useNA="always")
+#table(test_data$reorder, useNA="always")
 
 ### Review final structure
-str(training_data)
-str(test_data)
+#str(training_data)
+#str(test_data)
+
 
 #-------------------------------------------#
 #---------- Smote ------------------- ------#
@@ -222,9 +195,43 @@ str(test_data)
 #no <- no[2001:nrow(no),]
 #training_data2 <- rbind(yes,no)
 #training_data <- training_data2[sample(1:nrow(training_data2)), ]
-training_data <- as.data.frame(training_data)
-training_data <- SMOTE(reorder ~ ., data=training_data, perc.over=400, k=7)
-str(training_data)
+
+training_data <- SMOTE(reorder ~ ., data=training_data, perc.over=400, k=5, perc.under=125)
+table(training_data$reorder)
+
+
+### DATE STUFF
+
+#------------ date ------------#
+#table(training_data$date, useNA="always")
+#table(test_data$date, useNA="always")
+date_format = "%Y-%m-%d"
+training_data$date = as.Date(training_data$date, date_format)
+test_data$date = as.Date(test_data$date, date_format)
+
+
+#creation_date
+#table(training_data$creation_date, useNA="always")
+#table(test_data$creation_date, useNA="always")
+#date_format = "%Y-%m-%d"
+training_data$creation_date = as.Date(training_data$creation_date, date_format)
+test_data$creation_date = as.Date(test_data$creation_date, date_format)
+
+# deliverydatepromised
+#table(training_data$deliverydatepromised, useNA="always")
+#table(test_data$deliverydatepromised, useNA="always")
+#date_format = "%Y-%m-%d"
+training_data$deliverydatepromised = as.Date(training_data$deliverydatepromised, date_format)
+test_data$deliverydatepromised = as.Date(test_data$deliverydatepromised, date_format)
+
+# deliverydatereal
+#table(training_data$deliverydatereal, useNA="always")
+#table(test_data$deliverydatereal, useNA="always")
+#date_format = "%Y-%m-%d"
+training_data$deliverydatereal = as.Date(training_data$deliverydatereal, date_format)
+test_data$deliverydatereal = as.Date(test_data$deliverydatereal, date_format)
+
+
 #-------------------------------------------#
 #------------ Feature Selection ------------#
 #-------------------------------------------#
