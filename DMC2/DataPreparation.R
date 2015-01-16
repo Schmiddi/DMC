@@ -3,6 +3,7 @@
 library(caret)
 #install.packages("FSelector")
 library(FSelector)
+library(DMwR)
 
 
 # For reasons of traceability you must use a fixed seed
@@ -212,7 +213,18 @@ table(test_data$reorder, useNA="always")
 str(training_data)
 str(test_data)
 
-
+#-------------------------------------------#
+#---------- Smote ------------------- ------#
+#-------------------------------------------#
+#yes <- training_data[training_data$reorder == "yes",]
+#no <- training_data[training_data$reorder == "no",]
+#no <- no[sample(1:nrow(no)), ]
+#no <- no[2001:nrow(no),]
+#training_data2 <- rbind(yes,no)
+#training_data <- training_data2[sample(1:nrow(training_data2)), ]
+training_data <- as.data.frame(training_data)
+training_data <- SMOTE(reorder ~ ., data=training_data, perc.over=400, k=7)
+str(training_data)
 #-------------------------------------------#
 #------------ Feature Selection ------------#
 #-------------------------------------------#
@@ -222,7 +234,11 @@ weights_info_gain = information.gain(reorder ~ ., data=training_data)
 weights_gain_ratio = gain.ratio(reorder ~ ., data=training_data)
 #weights_gain_ratio
 # Select the 10 most important attributes based on Gain Ratio
-most_important_attributes <- cutoff.k(weights_gain_ratio, 10)
-#most_important_attributes
+most_important_attributes <- cutoff.k(weights_gain_ratio, 30)
+most_important_attributes
+
+#source("DataVisualisation.r")
+#scatter(training_data[,c("newsletter","reorder")])
+
 formula_with_most_important_attributes <- as.simple.formula(most_important_attributes, "reorder")
 #formula_with_most_important_attributes
