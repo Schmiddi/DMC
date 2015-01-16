@@ -2,8 +2,10 @@
 #install.packages("caret")
 #install.packages("klaR") # Needed for naive bayes
 #install.packages("RWeka") # Needed for j48
+#install.packages("LogicReg") # Needed for logistic regression
 install.packages("kernlab") # Needed for linear svm
 library(caret)
+#install.packages("adabag") # Needed for ada boosting
 # For reasons of traceability you must use a fixed seed
 set.seed(42) # do NOT CHANGE this seed
 
@@ -35,23 +37,63 @@ j48 <- function(attr, X){
   return (m)
 }
 
+# Naive Bayes
 nb <- function(attr, X) {
+  set.seed(42) # do NOT CHANGE this seed
   fitCtrl <- trainControl(method="repeatedcv", number=10, repeats=2)
   mod <- train(attr, data=X, method="nb", trControl=fitCtrl, metric="Accuracy")
   return (mod)
 }
 
 svmLinear <- function(attr, X) {
-  fitCtrl <- trainControl(method="repeatedcv", number=10, repeats=2)
-  mod <- train(attr, data=X, method="svmLinear", trControl=fitCtrl, metric="Accuracy",tuneGrid=data.frame(C=c(2^(-5))))
+  set.seed(42) # do NOT CHANGE this seed
+  fitCtrl <- trainControl(method="repeatedcv", number=10, repeats=1)
+  mod <- train(attr, data=X, method="svmLinear", trControl=fitCtrl, metric="Accuracy",tuneGrid=data.frame(C=c(1,2^5,2^10)))
   return (mod)  
 }
 
+# ada
+ada2 <- function(attr, X){
+  set.seed(42) # do NOT CHANGE this seed
+  fitCtrl <- trainControl(method="repeatedcv", number=10, repeats=1)
+  mod <- train(attr, data=X, method="AdaBoost.M1", trControl=fitCtrl, metric="Accuracy", preProc = c("center","scale"))
+  return(mod)
+}
+adaBest <- function(attr, X){
+  set.seed(42) # do NOT CHANGE this seed
+  fitCtrl <- trainControl(method="repeatedcv", number=10, repeats=1)
+  mod <- train(attr, data=X, method="AdaBoost.M1", trControl=fitCtrl, metric="Accuracy", preProc = c("center","scale"), tuneGrid=data.frame(coeflearn="Freund",maxdepth=2,mfinal=150))
+  return(mod)
+}
+
+# knn
+knn <- function(attr, X) {
+  set.seed(42) # do NOT CHANGE this seed
+  fitCtrl <- trainControl(method="repeatedcv", number=10, repeats=1)
+  mod <- train(attr, data=X, method="knn", trControl=fitCtrl, metric="Accuracy",tuneGrid=data.frame(k=c(55,155,255)))
+  return (mod)  
+}
+
+# Logistic Regression
+logreg <- function(attr, X) {
+  set.seed(42) # do NOT CHANGE this seed
+  fitCtrl <- trainControl(method="repeatedcv", number=10, repeats=1)
+  mod <- train(attr, data=X, method="logreg", trControl=fitCtrl, metric="Accuracy" ,tuneGrid=data.frame(treesize=c(1,10), ntrees=c(1,10)) )
+  return (mod)
+}
+
+?train
 
 # Show results and metrics
  model <- j48(formula_with_most_important_attributes, training_data)
 model = nb(formula_with_most_important_attributes, training_data)
 model = svmLinear(formula_with_most_important_attributes, training_data)
+model = ada2(formula_with_most_important_attributes, training_data)
+model = adaBest(formula_with_most_important_attributes, training_data)
+modelKnn = knn(formula_with_most_important_attributes, training_data)
+modelKnn
+modelLogreg = logreg(formula_with_most_important_attributes, training_data)
+modelLogreg
 model
 model$results
 
@@ -64,11 +106,11 @@ confusionMatrix(model)
 
 ######################################################
 # 5. Predict Classes in Test Data
-#prediction_classes = predict.train(object=model, newdata=test_data, na.action=na.pass)
-#predictions = data.frame(id=test_data$ID, prediction=prediction_classes)
-#predictions
+prediction_classes = predict.train(object=model, newdata=test_data, na.action=na.pass)
+predictions = data.frame(id=test_data$id, prediction=prediction_classes)
+predictions
 
 
 ######################################################
 # 6. Export the Predictions
-#write.csv(predictions, file="predictions_group_name_number.csv", row.names=FALSE)
+write.csv(predictions, file="predictions_DropDatabase_2.csv", row.names=FALSE)
