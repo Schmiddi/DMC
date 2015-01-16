@@ -28,7 +28,7 @@ test_data = read.csv("TestData.csv", sep=",")
 #------------ id ------------#
 # Remove column
 training_data$id = NULL 
-test_data$id = NULL 
+#test_data$id = NULL 
 
 #------------ workclass ------------#
 # Remove leading whitepace from factors
@@ -52,8 +52,8 @@ test_data$education = ordered(test_data$education, levels=EDUCATION_ORDER)
 
 #------------ edu ------------#
 # Remove edu (redundand with education)
-training_data$edu = NULL 
-test_data$edu = NULL 
+training_data$edu = NULL
+test_data$edu = NULL
 
 #------------ family_status ------------#
 FAMILY_STATUS = c("divorced", "married", "never-married", "separated", "widowed")
@@ -105,6 +105,9 @@ test_data$country[test_data$country=="?"] <- NA
 # Drop unused levels (?)
 training_data$country <- droplevels(training_data$country)
 test_data$country <- droplevels(test_data$country)
+# TO character
+training_data$country=as.character(training_data$country)
+test_data$country=as.character(test_data$country)
 
 ### Add column status based on country
 training_data <- collapse_country_to_status(training_data)
@@ -138,7 +141,11 @@ training_data$region <- as.factor(training_data$region)
 test_data$region <- as.factor(test_data$region)
 
 
+## Drop Country
+training_data$country = NULL
 
+training_data$family_status = NULL
+test_data$family_status = NULL
 ### Review final structure
 str(training_data)
 str(test_data)
