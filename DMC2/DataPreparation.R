@@ -140,9 +140,9 @@ table(training_data$value, useNA="always")
 #table(test_data$value, useNA="always")
 #NOYES = c("no", "yes")
 VALUE = c("lowest","low","mid","high","highest")
-training_data$value  = ordered(training_data$value ,levels=1:5, labels=VALUE)
-test_data$value = ordered(test_data$value, levels=1:5,labels=VALUE)
-test_train$value = ordered(test_train$value, levels=1:5,labels=VALUE)
+training_data$value  = factor(training_data$value ,levels=1:5, labels=VALUE)
+test_data$value = factor(test_data$value, levels=1:5,labels=VALUE)
+test_train$value = factor(test_train$value, levels=1:5,labels=VALUE)
 #str(training_data)
 
 # numberitems
@@ -223,8 +223,8 @@ test_train$shippingcosts = factor(test_train$shippingcosts, levels=0:1, labels=N
 #training_data2 <- rbind(yes,no)
 #training_data <- training_data2[sample(1:nrow(training_data2)), ]
 
-training_data <- SMOTE(reorder ~ ., data=training_data, perc.over=400, k=5, perc.under=125)
-table(training_data$reorder)
+training_data <- SMOTE(reorder ~ ., data=training_data, perc.over=200, perc.under=200, k=5)
+training_data$numberitems = as.integer(training_data$numberitems)
 
 
 ### DATE STUFF
