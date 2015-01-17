@@ -26,6 +26,7 @@ training_data <- rbind(yes[152:nrow(yes), ], no[650:nrow(no), ])
 test_train <- training_data[sample(1:nrow(test_train)), ] # randomize samples
 training_data <- training_data[sample(1:nrow(training_data)), ] # randomize samples
 names(test_train)[names(test_train)=="reorder"] <- "reorder_original"
+test_train$reorder <- -1
 #############################
 ##### Data Preparation  #####
 #############################
